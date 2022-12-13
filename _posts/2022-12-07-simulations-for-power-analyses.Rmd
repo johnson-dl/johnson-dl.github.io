@@ -1,0 +1,52 @@
+---
+title: "Data Simulation for Psychological Research"
+format: html
+editor: visual
+---
+
+## Why Simulations?
+
+When I first heard of data simulations I had two initial thoughts; that's too complicated for me and when would I ever need them. Luckily I was wise enough to push away that first thought but then I was excited when I realized data simulations could be very relevant to me and my work as an experimental psychologist.
+
+One of the benefits of data simulations is for power analyses - a technique used to decided how many participants are needed within a study to detect a particular effect size of interest.
+
+## How do we start?
+
+The crux of a power analysis using simulation is to generate data that we believe would exist if our hypothesis were correct, and we do that many, many times (sometimes up to 1000 times). From there we run a statistical model on each set of our simulated data and collect the p-value from that model. Finally, we calculate the proportion of significant p-values to all of the sets of data we generated. That is our power.
+
+But enough chat, let's get to to coding. Let's start by creating a matrix that we'll use to store the results from our statistical models
+
+```{r}
+num_sims <- 100
+sim_matrix <- matrix(nrow = num_sims)
+
+sim_matrix
+```
+
+For this example we'll stick to a simple experiment. We hypothesize that two groups, one a control group and one an experimental group, differ in their average scores on a variable of interest. Specifically we believe this is a difference of .5. How many participants in each group do we need in order to detect a mean difference of .5? Let's say we believe 30 is good enough.
+
+```{r}
+for(i in 1:num_sims){
+  #create two normally distributed variables - our two groups of comparison
+  control <- rnorm(n = 30, mean = 0, sd = 1)
+  experiment<- rnorm(n = 30, mean = .5, sd = 1)
+  
+#here we specify the mean different between groups  with the mean for vatiable 2. Hence when simulating for a t-test we think about the mean difference we expect to find
+  
+  model_result <- t.test(control, experiment)
+  
+  # adding model result (p-value) to our simulation matrxi which will hold all of our p-values
+  sim_matrix[i] <- model_result$p.value
+}
+
+
+# compute the number of p-values less than .05 from 
+sig <- length(which(num_sims < .05))
+
+#get total number of sims run (in this case 100, or same as num_sims)
+total <- length(num_sims)
+
+#get our power estimate - the number of significant results our of 100 simulations
+print(sig / total)
+
+```

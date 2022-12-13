@@ -1,0 +1,7 @@
+theme: jekyll-theme-minimal
+plugins:
+- jekyll-remote-theme
+
+title: Hi, I'm Devin.
+logo: /site-assets/img/profile.png
+#description: Data Scientist, Psychologist, and Educator.
